@@ -2,11 +2,14 @@ import { ImageBackground, StyleSheet, SafeAreaView } from 'react-native';
 import StartGamePage from './pages/StartGamePage';
 import GamePage from './pages/GamePage';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { colorPalette } from './theme/colors';
 import GameOverPage from './pages/GameOverPage';
 import { useFonts } from 'expo-font';
-import AppLoading from 'expo-app-loading';
+// import AppLoading from 'expo-app-loading';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [userNumber, setUserNumber] = useState(null);
@@ -18,9 +21,21 @@ export default function App() {
     'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
   });
 
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setAppIsReady`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
-    return <AppLoading />;
+    return null;
   }
+
   function pickerNumberHandler(number) {
     setUserNumber(number);
     setGameIsOver(false);
@@ -39,9 +54,7 @@ export default function App() {
   let screen = <StartGamePage onPickNumber={pickerNumberHandler} />;
 
   if (userNumber) {
-    screen = (
-      <GamePage userNumber={userNumber} onGameOver={gameOverHandler} />
-    );
+    screen = <GamePage userNumber={userNumber} onGameOver={gameOverHandler} />;
   }
 
   if (gameIsOver && userNumber) {
@@ -57,7 +70,8 @@ export default function App() {
   return (
     <LinearGradient
       colors={[colorPalette.primary_600, colorPalette.secondary_500]}
-      style={styles.appContainer}>
+      style={styles.appContainer}
+      onLayout={onLayoutRootView}>
       <ImageBackground
         source={require('./assets/images/background.png')}
         resizeMode='cover'
