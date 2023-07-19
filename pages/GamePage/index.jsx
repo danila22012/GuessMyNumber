@@ -1,4 +1,10 @@
-import { StyleSheet, View, Alert, Text, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  useWindowDimensions,
+  FlatList,
+} from 'react-native';
 import Title from '../../components/Title';
 import { colorPalette } from '../../theme/colors';
 import { useEffect, useState } from 'react';
@@ -26,6 +32,7 @@ export default function GamePage({ userNumber, onGameOver }) {
     generateRandomBetween(0, 100, userNumber)
   );
   const [guessRounds, setGuessRounds] = useState([currentGuess]);
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     minBoundary = 0;
@@ -63,9 +70,8 @@ export default function GamePage({ userNumber, onGameOver }) {
     }
   }, [currentGuess]);
 
-  return (
-    <View style={styles.screen}>
-      <Title>Opponent's guess</Title>
+  let Content = (
+    <>
       <NumberWrapper>{currentGuess}</NumberWrapper>
       <CardWrapper>
         <InstructionText style={styles.instructionText}>
@@ -83,8 +89,34 @@ export default function GamePage({ userNumber, onGameOver }) {
             </PrimaryButton>
           </View>
         </View>
-        <View></View>
       </CardWrapper>
+    </>
+  );
+
+  if (width > 600) {
+    Content = (
+      <>
+        <View style={styles.buttonsContainerWide}>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={() => nextGuessHandler('greater')}>
+              <Ionicons name='md-add' size={24} />
+            </PrimaryButton>
+          </View>
+          <NumberWrapper>{currentGuess}</NumberWrapper>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={() => nextGuessHandler('lower')}>
+              <Ionicons name='md-remove' size={24} />
+            </PrimaryButton>
+          </View>
+        </View>
+      </>
+    );
+  }
+
+  return (
+    <View style={styles.screen}>
+      <Title>Opponent's guess</Title>
+      {Content}
       <View style={styles.listContainer}>
         <FlatList
           data={guessRounds}
@@ -105,6 +137,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: 24,
+    alignItems: 'center',
   },
   instructionText: {
     marginBottom: 10,
@@ -122,6 +155,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  buttonsContainerWide: { flexDirection: 'row', alignItems: 'center' },
+
   buttonContainer: {
     flex: 1,
   },
