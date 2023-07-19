@@ -4,8 +4,10 @@ import {
   Alert,
   useWindowDimensions,
   FlatList,
+  Platform,
 } from 'react-native';
-import Title from '../../components/Title';
+import TitleAndroid from '../../components/Title/android';
+import TitleIos from '../../components/Title/ios';
 import { colorPalette } from '../../theme/colors';
 import { useEffect, useState } from 'react';
 import NumberWrapper from '../../components/NumberWrapper';
@@ -115,7 +117,11 @@ export default function GamePage({ userNumber, onGameOver }) {
 
   return (
     <View style={styles.screen}>
-      <Title>Opponent's guess</Title>
+      {Platform.OS === 'android' && (
+        <TitleAndroid>Opponent's guess</TitleAndroid>
+      )}
+      {Platform.OS === 'ios' && <TitleIos>Opponent's guess</TitleIos>}
+
       {Content}
       <View style={styles.listContainer}>
         <FlatList

@@ -7,9 +7,10 @@ import {
   ScrollView,
   useWindowDimensions,
 } from 'react-native';
-import Title from '../../components/Title';
 import { colorPalette } from '../../theme/colors';
 import PrimaryButton from '../../components/PrimaryButton';
+import TitleAndroid from '../../components/Title/android';
+import TitleIos from '../../components/Title/ios';
 
 export default function GameOverPage({
   userNumber,
@@ -38,7 +39,8 @@ export default function GameOverPage({
   return (
     <ScrollView style={styles.screen}>
       <View style={styles.rootContainer}>
-        <Title>GAME OVER!</Title>
+        {Platform.OS === 'android' && <TitleAndroid>GAME OVER!</TitleAndroid>}
+        {Platform.OS === 'ios' && <TitleIos>GAME OVER!</TitleIos>}
         <View style={[styles.imageContainer, imageStyle]}>
           <Image
             style={styles.image}

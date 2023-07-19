@@ -10,9 +10,10 @@ import {
 import PrimaryButton from '../../components/PrimaryButton';
 import { useState } from 'react';
 import { colorPalette } from '../../theme/colors';
-import Title from '../../components/Title';
 import CardWrapper from '../../components/CardWrapper';
 import InstructionText from '../../components/InstructionText';
+import TitleAndroid from '../../components/Title/android';
+import TitleIos from '../../components/Title/ios';
 
 export default function StartGamePage({ onPickNumber }) {
   const [value, setValue] = useState('');
@@ -45,7 +46,10 @@ export default function StartGamePage({ onPickNumber }) {
     <ScrollView style={styles.screen}>
       <KeyboardAvoidingView style={styles.screen} behavior='position'>
         <View style={{ ...styles.rootContainer, marginTop }}>
-          <Title>Guess my number</Title>
+          {Platform.OS === 'android' && (
+            <TitleAndroid>Guess my number</TitleAndroid>
+          )}
+          {Platform.OS === 'ios' && <TitleIos>Guess my number</TitleIos>}
           <CardWrapper>
             <InstructionText>Enter a Number</InstructionText>
             <TextInput
